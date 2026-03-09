@@ -46,9 +46,9 @@
     font-family: 'Roboto', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
     background: var(--bg-primary);
     min-height: 100vh;
-    padding: 20px;
+    padding: 12px 20px;
     color: var(--text-primary);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 400;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
@@ -58,12 +58,12 @@
   /* ── HEADER ── */
   .header {
     text-align: center;
-    margin-bottom: 30px;
-    padding: 30px 0 20px 0;
+    margin-bottom: 14px;
+    padding: 14px 0 12px 0;
     border-bottom: 1px solid var(--border-color);
     position: relative;
   }
-  .header h1 { font-size: 32px; margin-bottom: 6px; font-weight: 500; color: #ff6d3b; }
+  .header h1 { font-size: 24px; margin-bottom: 4px; font-weight: 500; color: #ff6d3b; }
   .header .subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 6px; line-height: 1.5; }
   .header .meta-tag {
     display: inline-block; background: rgba(255,109,59,0.1);
@@ -97,13 +97,13 @@
   .summary-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: 10px;
+    margin-bottom: 12px;
   }
   .card {
     background: var(--bg-secondary);
     border-radius: 2px;
-    padding: 18px 20px;
+    padding: 10px 14px;
     box-shadow: 0 1px 3px var(--shadow);
     border: 1px solid var(--border-color);
     transition: background-color 0.3s ease;
@@ -116,19 +116,19 @@
     background: var(--card-accent, #ff6d3b);
   }
   .card h3 {
-    color: var(--text-secondary); font-size: 11px;
-    text-transform: uppercase; margin-bottom: 10px;
+    color: var(--text-secondary); font-size: 10px;
+    text-transform: uppercase; margin-bottom: 6px;
     font-weight: 400; letter-spacing: 0.5px;
   }
-  .card .value { font-size: 22px; font-weight: 400; color: var(--text-primary); }
+  .card .value { font-size: 18px; font-weight: 400; color: var(--text-primary); }
   .card .value.positive { color: #00c281; }
   .card .value.negative { color: #ff4d4d; }
-  .card .sub { font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
+  .card .sub { font-size: 10px; color: var(--text-secondary); margin-top: 2px; }
 
   /* ── TOOLBAR ── */
   .toolbar {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 14px; flex-wrap: wrap; gap: 10px;
+    margin-bottom: 8px; flex-wrap: wrap; gap: 8px;
   }
   .toggle-group { display: flex; gap: 6px; flex-wrap: wrap; }
   .toggle-btn {
@@ -147,19 +147,19 @@
   .main-card {
     background: var(--bg-secondary);
     border-radius: 2px;
-    padding: 24px 24px 16px;
+    padding: 14px 18px 10px;
     box-shadow: 0 1px 3px var(--shadow);
-    margin-bottom: 16px;
+    margin-bottom: 10px;
     border: 1px solid var(--border-color);
     transition: background-color 0.3s ease;
   }
   .chart-header {
     display: flex; justify-content: space-between; align-items: flex-start;
-    margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+    margin-bottom: 10px; flex-wrap: wrap; gap: 8px;
   }
   .chart-header h2 {
-    font-size: 15px; font-weight: 500; color: var(--text-primary);
-    margin-bottom: 3px;
+    font-size: 13px; font-weight: 500; color: var(--text-primary);
+    margin-bottom: 2px;
   }
   .chart-header .chart-sub { font-size: 11px; color: var(--text-secondary); }
   .legend { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
@@ -183,6 +183,13 @@
   .negative { color: #ff4d4d; }
 
   canvas { cursor: crosshair; }
+
+  /* Each chart canvas fills viewport height minus fixed chrome */
+  .chart-canvas {
+    display: block;
+    width: 100% !important;
+    height: clamp(200px, calc(100vh - 320px), 420px) !important;
+  }
 
   @media (max-width: 768px) {
     .summary-cards { grid-template-columns: 1fr 1fr; }
@@ -240,7 +247,7 @@
         </div>
       </div>
     </div>
-    <canvas id="cMain" height="340"></canvas>
+    <canvas id="cMain" class="chart-canvas"></canvas>
   </div>
 
 
@@ -263,7 +270,7 @@
         <div class="leg-item"><div class="leg-line" style="background:#ff6d3b"></div>Option Close</div>
       </div>
     </div>
-    <canvas id="c1" height="380"></canvas>
+    <canvas id="c1" class="chart-canvas"></canvas>
   </div>
 
   <!-- CHART 2 TOOLBAR -->
@@ -285,7 +292,7 @@
         <div class="leg-item"><div class="leg-line" style="background:#ff6d3b"></div>Option Close</div>
       </div>
     </div>
-    <canvas id="c2" height="380"></canvas>
+    <canvas id="c2" class="chart-canvas"></canvas>
   </div>
 
   <!-- CHART 3 TOOLBAR -->
@@ -307,7 +314,7 @@
         <div class="leg-item"><div class="leg-line" style="background:#ff6d3b"></div>Option Close</div>
       </div>
     </div>
-    <canvas id="c3" height="380"></canvas>
+    <canvas id="c3" class="chart-canvas"></canvas>
   </div>
 
   <!-- CHART 4 TOOLBAR -->
@@ -329,7 +336,7 @@
         <div class="leg-item"><div class="leg-line" style="background:#ff6d3b"></div>Option Close</div>
       </div>
     </div>
-    <canvas id="c4" height="380"></canvas>
+    <canvas id="c4" class="chart-canvas"></canvas>
   </div>
 
   <!-- CHART 5 TOOLBAR -->
@@ -351,7 +358,7 @@
         <div class="leg-item"><div class="leg-line" style="background:#ff6d3b"></div>Option Close</div>
       </div>
     </div>
-    <canvas id="c5" height="380"></canvas>
+    <canvas id="c5" class="chart-canvas"></canvas>
   </div>
 
   <!-- CHART 6 TOOLBAR -->
@@ -373,7 +380,7 @@
         <div class="leg-item"><div class="leg-line" style="background:#ff6d3b"></div>Option Close</div>
       </div>
     </div>
-    <canvas id="c6" height="380"></canvas>
+    <canvas id="c6" class="chart-canvas"></canvas>
   </div>
 
   <!-- CHART 7 TOOLBAR -->
@@ -395,7 +402,7 @@
         <div class="leg-item"><div class="leg-line" style="background:#ff6d3b"></div>Option Close</div>
       </div>
     </div>
-    <canvas id="c7" height="380"></canvas>
+    <canvas id="c7" class="chart-canvas"></canvas>
   </div>
 
   <!-- CHART 8 TOOLBAR -->
@@ -417,7 +424,7 @@
         <div class="leg-item"><div class="leg-line" style="background:#ff6d3b"></div>Option Close</div>
       </div>
     </div>
-    <canvas id="c8" height="380"></canvas>
+    <canvas id="c8" class="chart-canvas"></canvas>
   </div>
 
   <!-- CHART 9 TOOLBAR -->
@@ -439,7 +446,7 @@
         <div class="leg-item"><div class="leg-line" style="background:#ff6d3b"></div>Option Close</div>
       </div>
     </div>
-    <canvas id="c9" height="380"></canvas>
+    <canvas id="c9" class="chart-canvas"></canvas>
   </div>
 
   <!-- CHART 10 TOOLBAR -->
@@ -461,13 +468,55 @@
         <div class="leg-item"><div class="leg-line" style="background:#ff6d3b"></div>Option Close</div>
       </div>
     </div>
-    <canvas id="c10" height="380"></canvas>
+    <canvas id="c10" class="chart-canvas"></canvas>
   </div>
 
 </div>
 
 <div class="container">
   <p class="disclaimer">Source: NSE India · Nifty 50 Index · Daily values interpolated from weekly anchor points · Not for trading decisions</p>
+</div>
+
+<!-- ══════════════════ PAGE 2 — NIFTY200 MOMENTUM ══════════════════ -->
+<div style="border-top: 2px solid var(--border-color); margin: 48px 0 0 0; padding-top: 0;"></div>
+
+<div class="container" style="margin-top: 40px;">
+
+  <!-- PAGE 2 HEADER -->
+  <div class="header">
+    <div class="meta-tag">NSE India · Nifty 200 Momentum 30 Index · Daily</div>
+    <h1>Nifty 200 Momentum 30</h1>
+    <p class="subtitle">1,037 trading sessions &nbsp;·&nbsp; 03 Jan 2022 – 09 Mar 2026 &nbsp;·&nbsp; Daily closing prices</p>
+  </div>
+
+  <!-- STAT CARDS PAGE 2 -->
+  <div class="summary-cards" id="statsRowMom"></div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="toggle-group">
+      <button class="toggle-btn on" id="btnMomClose" onclick="toggleMomSeries()">Momentum 30</button>
+    </div>
+    <div class="hover-info" id="hoverInfoMom">Hover chart for values</div>
+  </div>
+
+  <!-- CHART CARD -->
+  <div class="main-card">
+    <div class="chart-header">
+      <div>
+        <h2>Nifty 200 Momentum 30 — Daily Close</h2>
+        <div class="chart-sub">03 Jan 2022 – 09 Mar 2026 · 1,037 sessions · Nifty 50 spot shown in tooltip where available</div>
+      </div>
+      <div class="legend">
+        <div class="leg-item">
+          <div class="leg-line" style="background:#ff6d3b"></div>Momentum 30
+        </div>
+      </div>
+    </div>
+    <canvas id="cMom" class="chart-canvas"></canvas>
+  </div>
+
+  <p class="disclaimer">Source: NSE India · Nifty 200 Momentum 30 Index · Daily · Nifty 50 overlay (Oct 2022 – Oct 2024) from matched sessions · Not for trading decisions</p>
 </div>
 
 <script>
@@ -594,11 +643,11 @@ function buildCharts() {
 
   // ── Chart 2 ──────────────────────────────────────────────────────────────
   const ctx2 = document.getElementById('cMain').getContext('2d');
-  const grad2a = ctx2.createLinearGradient(0, 0, 0, 340);
+  const grad2a = ctx2.createLinearGradient(0, 0, 0, ctx2.canvas.clientHeight || 300);
   grad2a.addColorStop(0, 'rgba(255,109,59,0.14)');
   grad2a.addColorStop(1, 'rgba(255,109,59,0.01)');
 
-  const grad2b = ctx2.createLinearGradient(0, 0, 0, 340);
+  const grad2b = ctx2.createLinearGradient(0, 0, 0, ctx2.canvas.clientHeight || 300);
   grad2b.addColorStop(0, 'rgba(74,159,212,0.12)');
   grad2b.addColorStop(1, 'rgba(74,159,212,0.01)');
 
@@ -774,7 +823,7 @@ function buildChartD18000_Dec2024() {
   if (chartObjD18000_Dec2024) { chartObjD18000_Dec2024.destroy(); chartObjD18000_Dec2024 = null; }
   const c = getColors();
   const ctx = document.getElementById('c1').getContext('2d');
-  const grad = ctx.createLinearGradient(0, 0, 0, 380);
+  const grad = ctx.createLinearGradient(0, 0, 0, ctx.canvas.clientHeight || 300);
   grad.addColorStop(0, 'rgba(255,109,59,0.16)');
   grad.addColorStop(1, 'rgba(255,109,59,0.01)');
   chartObjD18000_Dec2024 = new Chart(ctx, {
@@ -861,7 +910,7 @@ function buildChartD20000_Dec2024() {
   if (chartObjD20000_Dec2024) { chartObjD20000_Dec2024.destroy(); chartObjD20000_Dec2024 = null; }
   const c = getColors();
   const ctx = document.getElementById('c2').getContext('2d');
-  const grad = ctx.createLinearGradient(0, 0, 0, 380);
+  const grad = ctx.createLinearGradient(0, 0, 0, ctx.canvas.clientHeight || 300);
   grad.addColorStop(0, 'rgba(255,109,59,0.16)');
   grad.addColorStop(1, 'rgba(255,109,59,0.01)');
   chartObjD20000_Dec2024 = new Chart(ctx, {
@@ -948,7 +997,7 @@ function buildChartD22000_Dec2024() {
   if (chartObjD22000_Dec2024) { chartObjD22000_Dec2024.destroy(); chartObjD22000_Dec2024 = null; }
   const c = getColors();
   const ctx = document.getElementById('c3').getContext('2d');
-  const grad = ctx.createLinearGradient(0, 0, 0, 380);
+  const grad = ctx.createLinearGradient(0, 0, 0, ctx.canvas.clientHeight || 300);
   grad.addColorStop(0, 'rgba(255,109,59,0.16)');
   grad.addColorStop(1, 'rgba(255,109,59,0.01)');
   chartObjD22000_Dec2024 = new Chart(ctx, {
@@ -1035,7 +1084,7 @@ function buildChartD18000_Jun2024() {
   if (chartObjD18000_Jun2024) { chartObjD18000_Jun2024.destroy(); chartObjD18000_Jun2024 = null; }
   const c = getColors();
   const ctx = document.getElementById('c5').getContext('2d');
-  const grad = ctx.createLinearGradient(0, 0, 0, 380);
+  const grad = ctx.createLinearGradient(0, 0, 0, ctx.canvas.clientHeight || 300);
   grad.addColorStop(0, 'rgba(255,109,59,0.16)');
   grad.addColorStop(1, 'rgba(255,109,59,0.01)');
   chartObjD18000_Jun2024 = new Chart(ctx, {
@@ -1122,7 +1171,7 @@ function buildChartD20000_Jun2024() {
   if (chartObjD20000_Jun2024) { chartObjD20000_Jun2024.destroy(); chartObjD20000_Jun2024 = null; }
   const c = getColors();
   const ctx = document.getElementById('c6').getContext('2d');
-  const grad = ctx.createLinearGradient(0, 0, 0, 380);
+  const grad = ctx.createLinearGradient(0, 0, 0, ctx.canvas.clientHeight || 300);
   grad.addColorStop(0, 'rgba(255,109,59,0.16)');
   grad.addColorStop(1, 'rgba(255,109,59,0.01)');
   chartObjD20000_Jun2024 = new Chart(ctx, {
@@ -1209,7 +1258,7 @@ function buildChartD22000_Jun2024() {
   if (chartObjD22000_Jun2024) { chartObjD22000_Jun2024.destroy(); chartObjD22000_Jun2024 = null; }
   const c = getColors();
   const ctx = document.getElementById('c7').getContext('2d');
-  const grad = ctx.createLinearGradient(0, 0, 0, 380);
+  const grad = ctx.createLinearGradient(0, 0, 0, ctx.canvas.clientHeight || 300);
   grad.addColorStop(0, 'rgba(255,109,59,0.16)');
   grad.addColorStop(1, 'rgba(255,109,59,0.01)');
   chartObjD22000_Jun2024 = new Chart(ctx, {
@@ -1297,7 +1346,7 @@ function buildChartD24000_Dec2024() {
   if (chartObjD24000_Dec2024) { chartObjD24000_Dec2024.destroy(); chartObjD24000_Dec2024 = null; }
   const c = getColors();
   const ctx = document.getElementById('c4').getContext('2d');
-  const grad = ctx.createLinearGradient(0, 0, 0, 380);
+  const grad = ctx.createLinearGradient(0, 0, 0, ctx.canvas.clientHeight || 300);
   grad.addColorStop(0, 'rgba(255,109,59,0.16)');
   grad.addColorStop(1, 'rgba(255,109,59,0.01)');
   chartObjD24000_Dec2024 = new Chart(ctx, {
@@ -1405,7 +1454,7 @@ const D19000_Dec2023_TICKS = ["03-Oct-22","","","","","","","","","","","","",""
 function _buildOptionChart(canvasId, labels, optClose, underlying, oi, contracts, ticks, hoverDivId, objHolder) {
   const c = getColors();
   const ctx = document.getElementById(canvasId).getContext('2d');
-  const grad = ctx.createLinearGradient(0, 0, 0, 380);
+  const grad = ctx.createLinearGradient(0, 0, 0, ctx.canvas.clientHeight || 300);
   grad.addColorStop(0, 'rgba(255,109,59,0.16)');
   grad.addColorStop(1, 'rgba(255,109,59,0.01)');
   return new Chart(ctx, {
@@ -1433,6 +1482,137 @@ function buildChartD19000_Dec2023() { if (chartObjD19000_Dec2023) { chartObjD190
 function toggleD19000_Dec2023Series(idx) { if (!chartObjD19000_Dec2023) return; const meta = chartObjD19000_Dec2023.getDatasetMeta(idx); meta.hidden = !meta.hidden; chartObjD19000_Dec2023.update(); document.getElementById('btnD19000_Dec2023Close').classList.toggle('on', !meta.hidden); }
 
 // ── Patch buildCharts to build all numbered charts ──────────────────────────────
+
+// ── Nifty 200 Momentum 30 Data ─────────────────────────────────────────────────
+const MOM_LABELS = ["03-Jan-22","04-Jan-22","05-Jan-22","06-Jan-22","07-Jan-22","10-Jan-22","11-Jan-22","12-Jan-22","13-Jan-22","14-Jan-22","17-Jan-22","18-Jan-22","19-Jan-22","20-Jan-22","21-Jan-22","24-Jan-22","25-Jan-22","27-Jan-22","28-Jan-22","31-Jan-22","01-Feb-22","02-Feb-22","03-Feb-22","04-Feb-22","07-Feb-22","08-Feb-22","09-Feb-22","10-Feb-22","11-Feb-22","14-Feb-22","15-Feb-22","16-Feb-22","17-Feb-22","18-Feb-22","21-Feb-22","22-Feb-22","23-Feb-22","24-Feb-22","25-Feb-22","28-Feb-22","02-Mar-22","03-Mar-22","04-Mar-22","07-Mar-22","08-Mar-22","09-Mar-22","10-Mar-22","11-Mar-22","14-Mar-22","15-Mar-22","16-Mar-22","17-Mar-22","21-Mar-22","22-Mar-22","23-Mar-22","24-Mar-22","25-Mar-22","28-Mar-22","29-Mar-22","30-Mar-22","31-Mar-22","01-Apr-22","04-Apr-22","05-Apr-22","06-Apr-22","07-Apr-22","08-Apr-22","11-Apr-22","12-Apr-22","13-Apr-22","18-Apr-22","19-Apr-22","20-Apr-22","21-Apr-22","22-Apr-22","25-Apr-22","26-Apr-22","27-Apr-22","28-Apr-22","29-Apr-22","02-May-22","04-May-22","05-May-22","06-May-22","09-May-22","10-May-22","11-May-22","12-May-22","13-May-22","16-May-22","17-May-22","18-May-22","19-May-22","20-May-22","23-May-22","24-May-22","25-May-22","26-May-22","27-May-22","30-May-22","31-May-22","01-Jun-22","02-Jun-22","03-Jun-22","06-Jun-22","07-Jun-22","08-Jun-22","09-Jun-22","10-Jun-22","13-Jun-22","14-Jun-22","15-Jun-22","16-Jun-22","17-Jun-22","20-Jun-22","21-Jun-22","22-Jun-22","23-Jun-22","24-Jun-22","27-Jun-22","28-Jun-22","29-Jun-22","30-Jun-22","01-Jul-22","04-Jul-22","05-Jul-22","06-Jul-22","07-Jul-22","08-Jul-22","11-Jul-22","12-Jul-22","13-Jul-22","14-Jul-22","15-Jul-22","18-Jul-22","19-Jul-22","20-Jul-22","21-Jul-22","22-Jul-22","25-Jul-22","26-Jul-22","27-Jul-22","28-Jul-22","29-Jul-22","01-Aug-22","02-Aug-22","03-Aug-22","04-Aug-22","05-Aug-22","08-Aug-22","10-Aug-22","11-Aug-22","12-Aug-22","16-Aug-22","17-Aug-22","18-Aug-22","19-Aug-22","22-Aug-22","23-Aug-22","24-Aug-22","25-Aug-22","26-Aug-22","29-Aug-22","30-Aug-22","01-Sep-22","02-Sep-22","05-Sep-22","06-Sep-22","07-Sep-22","08-Sep-22","09-Sep-22","12-Sep-22","13-Sep-22","14-Sep-22","15-Sep-22","16-Sep-22","19-Sep-22","20-Sep-22","21-Sep-22","22-Sep-22","23-Sep-22","26-Sep-22","27-Sep-22","28-Sep-22","29-Sep-22","30-Sep-22","03-Oct-22","04-Oct-22","06-Oct-22","07-Oct-22","10-Oct-22","11-Oct-22","12-Oct-22","13-Oct-22","14-Oct-22","17-Oct-22","18-Oct-22","19-Oct-22","20-Oct-22","21-Oct-22","24-Oct-22","25-Oct-22","27-Oct-22","28-Oct-22","31-Oct-22","01-Nov-22","02-Nov-22","03-Nov-22","04-Nov-22","07-Nov-22","09-Nov-22","10-Nov-22","11-Nov-22","14-Nov-22","15-Nov-22","16-Nov-22","17-Nov-22","18-Nov-22","21-Nov-22","22-Nov-22","23-Nov-22","24-Nov-22","25-Nov-22","28-Nov-22","29-Nov-22","30-Nov-22","01-Dec-22","02-Dec-22","05-Dec-22","06-Dec-22","07-Dec-22","08-Dec-22","09-Dec-22","12-Dec-22","13-Dec-22","14-Dec-22","15-Dec-22","16-Dec-22","19-Dec-22","20-Dec-22","21-Dec-22","22-Dec-22","23-Dec-22","26-Dec-22","27-Dec-22","28-Dec-22","29-Dec-22","30-Dec-22","02-Jan-23","03-Jan-23","04-Jan-23","05-Jan-23","06-Jan-23","09-Jan-23","10-Jan-23","11-Jan-23","12-Jan-23","13-Jan-23","16-Jan-23","17-Jan-23","18-Jan-23","19-Jan-23","20-Jan-23","23-Jan-23","24-Jan-23","25-Jan-23","27-Jan-23","30-Jan-23","31-Jan-23","01-Feb-23","02-Feb-23","03-Feb-23","06-Feb-23","07-Feb-23","08-Feb-23","09-Feb-23","10-Feb-23","13-Feb-23","14-Feb-23","15-Feb-23","16-Feb-23","17-Feb-23","20-Feb-23","21-Feb-23","22-Feb-23","23-Feb-23","24-Feb-23","27-Feb-23","28-Feb-23","01-Mar-23","02-Mar-23","03-Mar-23","06-Mar-23","08-Mar-23","09-Mar-23","10-Mar-23","13-Mar-23","14-Mar-23","15-Mar-23","16-Mar-23","17-Mar-23","20-Mar-23","21-Mar-23","22-Mar-23","23-Mar-23","24-Mar-23","27-Mar-23","28-Mar-23","29-Mar-23","31-Mar-23","03-Apr-23","05-Apr-23","06-Apr-23","10-Apr-23","11-Apr-23","12-Apr-23","13-Apr-23","17-Apr-23","18-Apr-23","19-Apr-23","20-Apr-23","21-Apr-23","24-Apr-23","25-Apr-23","26-Apr-23","27-Apr-23","28-Apr-23","02-May-23","03-May-23","04-May-23","05-May-23","08-May-23","09-May-23","10-May-23","11-May-23","12-May-23","15-May-23","16-May-23","17-May-23","18-May-23","19-May-23","22-May-23","23-May-23","24-May-23","25-May-23","26-May-23","29-May-23","30-May-23","31-May-23","01-Jun-23","02-Jun-23","05-Jun-23","06-Jun-23","07-Jun-23","08-Jun-23","09-Jun-23","12-Jun-23","13-Jun-23","14-Jun-23","15-Jun-23","16-Jun-23","19-Jun-23","20-Jun-23","21-Jun-23","22-Jun-23","23-Jun-23","26-Jun-23","27-Jun-23","28-Jun-23","30-Jun-23","03-Jul-23","04-Jul-23","05-Jul-23","06-Jul-23","07-Jul-23","10-Jul-23","11-Jul-23","12-Jul-23","13-Jul-23","14-Jul-23","17-Jul-23","18-Jul-23","19-Jul-23","20-Jul-23","21-Jul-23","24-Jul-23","25-Jul-23","26-Jul-23","27-Jul-23","28-Jul-23","31-Jul-23","01-Aug-23","02-Aug-23","03-Aug-23","04-Aug-23","07-Aug-23","08-Aug-23","09-Aug-23","10-Aug-23","11-Aug-23","14-Aug-23","16-Aug-23","17-Aug-23","18-Aug-23","21-Aug-23","22-Aug-23","23-Aug-23","24-Aug-23","25-Aug-23","28-Aug-23","29-Aug-23","30-Aug-23","31-Aug-23","01-Sep-23","04-Sep-23","05-Sep-23","06-Sep-23","07-Sep-23","08-Sep-23","11-Sep-23","12-Sep-23","13-Sep-23","14-Sep-23","15-Sep-23","18-Sep-23","20-Sep-23","21-Sep-23","22-Sep-23","25-Sep-23","26-Sep-23","27-Sep-23","28-Sep-23","29-Sep-23","03-Oct-23","04-Oct-23","05-Oct-23","06-Oct-23","09-Oct-23","10-Oct-23","11-Oct-23","12-Oct-23","13-Oct-23","16-Oct-23","17-Oct-23","18-Oct-23","19-Oct-23","20-Oct-23","23-Oct-23","25-Oct-23","26-Oct-23","27-Oct-23","30-Oct-23","31-Oct-23","01-Nov-23","02-Nov-23","03-Nov-23","06-Nov-23","07-Nov-23","08-Nov-23","09-Nov-23","10-Nov-23","12-Nov-23","13-Nov-23","15-Nov-23","16-Nov-23","17-Nov-23","20-Nov-23","21-Nov-23","22-Nov-23","23-Nov-23","24-Nov-23","28-Nov-23","29-Nov-23","30-Nov-23","01-Dec-23","04-Dec-23","05-Dec-23","06-Dec-23","07-Dec-23","08-Dec-23","11-Dec-23","12-Dec-23","13-Dec-23","14-Dec-23","15-Dec-23","18-Dec-23","19-Dec-23","20-Dec-23","21-Dec-23","22-Dec-23","26-Dec-23","27-Dec-23","28-Dec-23","29-Dec-23","01-Jan-24","02-Jan-24","03-Jan-24","04-Jan-24","05-Jan-24","08-Jan-24","09-Jan-24","10-Jan-24","11-Jan-24","12-Jan-24","15-Jan-24","16-Jan-24","17-Jan-24","18-Jan-24","19-Jan-24","20-Jan-24","23-Jan-24","24-Jan-24","25-Jan-24","29-Jan-24","30-Jan-24","31-Jan-24","01-Feb-24","02-Feb-24","05-Feb-24","06-Feb-24","07-Feb-24","08-Feb-24","09-Feb-24","12-Feb-24","13-Feb-24","14-Feb-24","15-Feb-24","16-Feb-24","19-Feb-24","20-Feb-24","21-Feb-24","22-Feb-24","23-Feb-24","26-Feb-24","27-Feb-24","28-Feb-24","29-Feb-24","01-Mar-24","04-Mar-24","05-Mar-24","06-Mar-24","07-Mar-24","11-Mar-24","12-Mar-24","13-Mar-24","14-Mar-24","15-Mar-24","18-Mar-24","19-Mar-24","20-Mar-24","21-Mar-24","22-Mar-24","26-Mar-24","27-Mar-24","28-Mar-24","01-Apr-24","02-Apr-24","03-Apr-24","04-Apr-24","05-Apr-24","08-Apr-24","09-Apr-24","10-Apr-24","12-Apr-24","15-Apr-24","16-Apr-24","18-Apr-24","19-Apr-24","22-Apr-24","23-Apr-24","24-Apr-24","25-Apr-24","26-Apr-24","29-Apr-24","30-Apr-24","02-May-24","03-May-24","06-May-24","07-May-24","08-May-24","09-May-24","10-May-24","13-May-24","14-May-24","15-May-24","16-May-24","17-May-24","18-May-24","21-May-24","22-May-24","23-May-24","24-May-24","27-May-24","28-May-24","29-May-24","30-May-24","31-May-24","03-Jun-24","04-Jun-24","05-Jun-24","06-Jun-24","07-Jun-24","10-Jun-24","11-Jun-24","12-Jun-24","13-Jun-24","14-Jun-24","18-Jun-24","19-Jun-24","20-Jun-24","21-Jun-24","24-Jun-24","25-Jun-24","26-Jun-24","27-Jun-24","28-Jun-24","01-Jul-24","02-Jul-24","03-Jul-24","04-Jul-24","05-Jul-24","08-Jul-24","09-Jul-24","10-Jul-24","11-Jul-24","12-Jul-24","15-Jul-24","16-Jul-24","18-Jul-24","19-Jul-24","22-Jul-24","23-Jul-24","24-Jul-24","25-Jul-24","26-Jul-24","29-Jul-24","30-Jul-24","31-Jul-24","01-Aug-24","02-Aug-24","05-Aug-24","06-Aug-24","07-Aug-24","08-Aug-24","09-Aug-24","12-Aug-24","13-Aug-24","14-Aug-24","16-Aug-24","19-Aug-24","20-Aug-24","21-Aug-24","22-Aug-24","23-Aug-24","26-Aug-24","27-Aug-24","28-Aug-24","29-Aug-24","30-Aug-24","02-Sep-24","03-Sep-24","04-Sep-24","05-Sep-24","06-Sep-24","09-Sep-24","10-Sep-24","11-Sep-24","12-Sep-24","13-Sep-24","16-Sep-24","17-Sep-24","18-Sep-24","19-Sep-24","20-Sep-24","23-Sep-24","24-Sep-24","25-Sep-24","26-Sep-24","27-Sep-24","30-Sep-24","01-Oct-24","03-Oct-24","04-Oct-24","07-Oct-24","08-Oct-24","09-Oct-24","10-Oct-24","11-Oct-24","14-Oct-24","15-Oct-24","16-Oct-24","17-Oct-24","18-Oct-24","21-Oct-24","22-Oct-24","23-Oct-24","24-Oct-24","25-Oct-24","28-Oct-24","29-Oct-24","30-Oct-24","31-Oct-24","01-Nov-24","04-Nov-24","05-Nov-24","06-Nov-24","07-Nov-24","08-Nov-24","11-Nov-24","12-Nov-24","13-Nov-24","14-Nov-24","18-Nov-24","19-Nov-24","21-Nov-24","22-Nov-24","25-Nov-24","26-Nov-24","27-Nov-24","28-Nov-24","29-Nov-24","02-Dec-24","03-Dec-24","04-Dec-24","05-Dec-24","06-Dec-24","09-Dec-24","10-Dec-24","11-Dec-24","12-Dec-24","13-Dec-24","16-Dec-24","17-Dec-24","18-Dec-24","19-Dec-24","20-Dec-24","23-Dec-24","24-Dec-24","26-Dec-24","27-Dec-24","30-Dec-24","31-Dec-24","01-Jan-25","02-Jan-25","03-Jan-25","06-Jan-25","07-Jan-25","08-Jan-25","09-Jan-25","10-Jan-25","13-Jan-25","14-Jan-25","15-Jan-25","16-Jan-25","17-Jan-25","20-Jan-25","21-Jan-25","22-Jan-25","23-Jan-25","24-Jan-25","27-Jan-25","28-Jan-25","29-Jan-25","30-Jan-25","31-Jan-25","01-Feb-25","03-Feb-25","04-Feb-25","05-Feb-25","06-Feb-25","07-Feb-25","10-Feb-25","11-Feb-25","12-Feb-25","13-Feb-25","14-Feb-25","17-Feb-25","18-Feb-25","19-Feb-25","20-Feb-25","21-Feb-25","24-Feb-25","25-Feb-25","27-Feb-25","28-Feb-25","03-Mar-25","04-Mar-25","05-Mar-25","06-Mar-25","07-Mar-25","10-Mar-25","11-Mar-25","12-Mar-25","13-Mar-25","17-Mar-25","18-Mar-25","19-Mar-25","20-Mar-25","21-Mar-25","24-Mar-25","25-Mar-25","26-Mar-25","27-Mar-25","28-Mar-25","01-Apr-25","02-Apr-25","03-Apr-25","04-Apr-25","07-Apr-25","08-Apr-25","09-Apr-25","11-Apr-25","15-Apr-25","16-Apr-25","17-Apr-25","21-Apr-25","22-Apr-25","23-Apr-25","24-Apr-25","25-Apr-25","28-Apr-25","29-Apr-25","30-Apr-25","02-May-25","05-May-25","06-May-25","07-May-25","08-May-25","09-May-25","12-May-25","13-May-25","14-May-25","15-May-25","16-May-25","19-May-25","20-May-25","21-May-25","22-May-25","23-May-25","26-May-25","27-May-25","28-May-25","29-May-25","30-May-25","02-Jun-25","03-Jun-25","04-Jun-25","05-Jun-25","06-Jun-25","09-Jun-25","10-Jun-25","11-Jun-25","12-Jun-25","13-Jun-25","16-Jun-25","17-Jun-25","18-Jun-25","19-Jun-25","20-Jun-25","23-Jun-25","24-Jun-25","25-Jun-25","26-Jun-25","27-Jun-25","30-Jun-25","01-Jul-25","02-Jul-25","03-Jul-25","04-Jul-25","07-Jul-25","08-Jul-25","09-Jul-25","10-Jul-25","11-Jul-25","14-Jul-25","15-Jul-25","16-Jul-25","17-Jul-25","18-Jul-25","21-Jul-25","22-Jul-25","23-Jul-25","24-Jul-25","25-Jul-25","28-Jul-25","29-Jul-25","30-Jul-25","31-Jul-25","01-Aug-25","04-Aug-25","05-Aug-25","06-Aug-25","07-Aug-25","08-Aug-25","11-Aug-25","12-Aug-25","13-Aug-25","14-Aug-25","18-Aug-25","19-Aug-25","20-Aug-25","21-Aug-25","22-Aug-25","25-Aug-25","26-Aug-25","28-Aug-25","29-Aug-25","01-Sep-25","02-Sep-25","03-Sep-25","04-Sep-25","05-Sep-25","08-Sep-25","09-Sep-25","10-Sep-25","11-Sep-25","12-Sep-25","15-Sep-25","16-Sep-25","17-Sep-25","18-Sep-25","19-Sep-25","22-Sep-25","23-Sep-25","24-Sep-25","25-Sep-25","26-Sep-25","29-Sep-25","30-Sep-25","01-Oct-25","03-Oct-25","06-Oct-25","07-Oct-25","08-Oct-25","09-Oct-25","10-Oct-25","13-Oct-25","14-Oct-25","15-Oct-25","16-Oct-25","17-Oct-25","20-Oct-25","21-Oct-25","23-Oct-25","24-Oct-25","27-Oct-25","28-Oct-25","29-Oct-25","30-Oct-25","31-Oct-25","03-Nov-25","04-Nov-25","06-Nov-25","07-Nov-25","10-Nov-25","11-Nov-25","12-Nov-25","13-Nov-25","14-Nov-25","17-Nov-25","18-Nov-25","19-Nov-25","20-Nov-25","21-Nov-25","24-Nov-25","25-Nov-25","26-Nov-25","27-Nov-25","28-Nov-25","01-Dec-25","02-Dec-25","03-Dec-25","04-Dec-25","05-Dec-25","08-Dec-25","09-Dec-25","10-Dec-25","11-Dec-25","12-Dec-25","15-Dec-25","16-Dec-25","17-Dec-25","18-Dec-25","19-Dec-25","22-Dec-25","23-Dec-25","24-Dec-25","26-Dec-25","29-Dec-25","30-Dec-25","31-Dec-25","01-Jan-26","02-Jan-26","05-Jan-26","06-Jan-26","07-Jan-26","08-Jan-26","09-Jan-26","12-Jan-26","13-Jan-26","14-Jan-26","16-Jan-26","19-Jan-26","20-Jan-26","21-Jan-26","22-Jan-26","23-Jan-26","27-Jan-26","28-Jan-26","29-Jan-26","30-Jan-26","01-Feb-26","02-Feb-26","03-Feb-26","04-Feb-26","05-Feb-26","06-Feb-26","09-Feb-26","10-Feb-26","11-Feb-26","12-Feb-26","13-Feb-26","16-Feb-26","17-Feb-26","18-Feb-26","19-Feb-26","20-Feb-26","23-Feb-26","24-Feb-26","25-Feb-26","26-Feb-26","27-Feb-26","02-Mar-26","04-Mar-26","05-Mar-26","06-Mar-26","09-Mar-26"];
+const MOM_CLOSE = [21031.1,21107.4,21018.15,20948.1,21008.1,21163.8,21241.5,21394.1,21502.2,21456.1,21536.5,21009.7,20891.85,20854.5,20313.95,19421.45,19628.45,19228.2,19455.85,19897.25,20069.8,20325.2,20084.25,20097.65,19788.85,19705.9,20087.15,20228.45,19726.05,19038.5,19810.75,19717.95,19639.1,19500.9,19396.0,19317.5,19384.75,18266.6,19071.15,19335.2,19285.65,19285.4,18866.85,18531.05,18803.25,19112.4,19404.5,19436.75,19642.55,19356.15,19732.3,19978.6,19863.9,20083.9,20027.95,20157.9,20077.85,20086.75,20158.05,20392.95,20314.7,20451.1,20692.2,20947.3,20955.35,20660.15,20867.45,20829.5,20410.45,20448.65,20066.95,19695.55,19778.4,20092.65,19856.45,19483.95,19789.05,19505.95,19672.3,19443.35,19239.5,18760.85,18844.05,18454.45,18139.8,17784.6,17726.15,17254.9,17258.0,17356.05,17989.7,17852.6,17196.05,17567.35,17535.1,17332.9,16913.35,17067.95,17379.35,17941.55,17969.65,17798.05,17913.25,17669.55,17650.7,17502.25,17401.2,17490.45,17357.8,16711.35,16834.25,16894.2,16311.15,16159.85,15962.95,16456.2,16141.45,16352.6,16454.05,16700.05,16739.95,16538.5,16361.5,16182.5,16310.45,16278.3,16397.4,16619.3,16783.55,16886.3,16775.05,16750.55,16759.9,16961.35,17184.7,17270.75,17302.8,17539.4,17520.5,17521.9,17449.55,17552.1,17655.55,17906.9,18313.15,18400.0,18322.7,18321.55,18331.05,18543.5,18595.6,18677.55,18832.6,19050.4,19110.85,19164.85,18876.7,18607.55,18903.1,18961.5,18894.2,19148.9,19047.15,19405.55,19450.15,19434.3,19568.4,19696.35,19702.55,19751.0,19692.95,19874.7,20061.65,20076.0,20188.4,19772.8,19792.75,20012.2,19819.75,19929.3,19498.35,18869.75,18873.3,18769.05,18901.3,19130.55,18842.8,19243.3,19405.6,19485.95,19279.7,19037.7,19187.75,19079.2,19030.5,19179.5,19489.6,19477.55,19553.7,19426.3,19541.85,19561.75,19748.9,19771.4,20019.85,20343.3,20292.75,20287.6,20337.7,20466.1,20381.45,20121.4,20118.45,20041.15,20128.95,20066.65,20003.3,19825.2,19781.0,19918.0,19890.6,20008.2,20080.0,20125.25,20079.05,20264.3,20264.6,20245.25,20291.05,20302.0,20200.45,20224.85,20197.15,20182.3,20265.0,20360.55,20131.4,19810.8,20035.3,20019.8,19631.95,19450.2,18925.1,19271.4,19394.95,19489.85,19450.65,19444.95,19515.15,19548.1,19296.95,19411.3,19287.6,19489.0,19200.9,19162.7,19129.6,19282.15,19188.15,19175.65,19239.3,19178.6,19123.15,19192.25,19101.85,18780.9,18167.25,18229.05,18610.65,18049.15,17965.75,18294.9,18318.75,18333.6,18486.5,18426.05,18404.7,18241.55,18316.8,18458.45,18587.25,18410.45,18309.85,18254.85,17958.9,17996.5,17916.0,17869.6,17890.95,18238.65,18206.9,18570.4,18704.7,18904.0,18730.2,18560.2,18214.9,18106.3,18066.3,18138.85,18210.95,18026.1,18130.0,18135.4,18037.75,17860.65,17836.55,17738.55,18044.45,18257.05,18319.9,18285.5,18371.05,18433.7,18570.0,18610.25,18658.05,18767.5,18788.8,18754.65,18800.05,18712.15,18847.65,18956.55,19036.6,19105.95,19315.75,19462.05,19445.3,19572.2,19502.6,19646.75,19567.45,19623.2,19696.05,19737.5,19838.95,19855.65,19867.65,19688.25,19733.3,19879.45,19995.0,19932.6,20059.5,20262.65,20397.45,20460.85,20459.9,20401.75,20568.35,20671.45,20822.25,20961.75,20797.15,20827.8,20896.6,21057.65,21096.7,21006.35,21281.4,21220.95,21282.35,21214.65,21021.2,20831.15,20913.65,20994.95,21199.4,21312.9,21335.4,21208.6,21429.95,21525.1,21371.45,21287.05,21561.0,21619.1,21393.2,21479.15,21500.8,21476.1,21677.65,21714.7,21589.2,21689.6,21661.15,21797.15,21865.1,22084.3,22275.85,22124.1,21812.85,21737.2,21791.0,21873.2,21856.5,21973.55,21865.85,21802.65,21761.25,21742.3,21770.95,21704.05,21880.8,22098.8,22267.75,22274.95,22017.25,22147.25,22172.65,22363.05,22211.65,22322.2,22475.55,22582.1,22617.65,22736.25,23085.3,23277.9,22693.2,22761.05,22917.45,23008.55,23050.8,23039.0,22797.95,22800.35,22948.5,22947.95,23233.1,22915.65,23231.25,23263.0,22805.8,22828.8,23041.6,22824.0,23132.0,23226.75,23271.55,23251.15,23323.95,23396.4,23086.3,23095.85,22792.55,22401.0,22243.3,21988.9,22409.35,22352.95,22381.7,22276.75,22665.45,22831.95,22998.6,23160.2,23423.15,23514.95,23623.45,23785.5,23881.85,24084.4,24135.95,24278.4,24366.55,24337.5,24299.9,24417.75,24406.6,24579.4,24781.75,25061.65,25611.95,26102.5,26220.45,26345.85,26323.8,26365.3,26632.9,26567.95,27134.7,27307.35,27210.95,27395.25,27352.8,26509.9,26791.1,26881.3,27186.35,27287.35,27284.3,27352.7,27435.95,27402.5,27514.7,27831.1,27870.1,27765.9,27850.4,27821.45,27816.95,27881.35,28136.0,27975.4,27716.7,27739.1,28256.3,28244.4,27495.15,28153.0,28298.1,28944.7,28745.85,29048.5,28845.15,29173.95,29305.9,29551.25,29913.15,30103.05,29718.9,29121.0,29398.55,29832.5,30171.15,30515.2,30396.55,30238.65,29829.25,30231.3,30328.65,30274.75,30256.95,29850.65,29990.8,30489.2,31125.65,31258.9,31231.6,31479.15,31422.6,30947.75,29639.7,30106.35,29585.45,29708.5,29213.3,29215.7,30005.3,30231.25,30505.7,30397.0,30781.15,31204.75,31430.4,31518.6,31479.65,31534.6,31590.7,31378.2,31631.9,31527.0,31145.35,31146.5,30882.85,30745.65,31119.65,31208.55,31487.65,32026.5,32219.2,32257.65,32577.95,33182.8,33192.05,32717.2,31986.65,32580.7,31962.8,32310.95,32400.3,32749.15,32895.55,33426.35,33684.25,34044.35,34319.15,34315.25,34536.55,34913.65,34916.15,34737.55,34710.95,34202.65,34162.8,35736.75,32237.75,33498.45,34252.8,34826.15,35014.1,35211.3,35494.0,35848.3,36250.15,36360.25,35721.85,35677.45,35453.9,35641.35,35489.65,35264.05,35223.2,35298.95,35667.8,35452.3,35913.95,36277.95,36453.8,36423.0,36572.85,36450.6,36538.65,36270.15,36561.4,36409.45,35828.15,34722.4,35271.7,34992.95,35044.0,35253.25,36180.35,36637.15,36735.9,37012.75,36792.7,35950.7,34620.15,34295.0,35364.2,35183.95,35834.0,35678.45,35270.15,35178.7,35879.4,35989.45,36219.15,36362.85,36432.8,36554.7,36719.6,36717.65,36847.95,36895.0,37102.65,36855.05,36941.75,36765.45,36612.7,35954.3,35757.8,36012.3,35699.3,36431.15,36445.85,36552.45,36574.4,36400.0,36037.3,36583.15,37295.3,37543.05,37479.65,37820.35,38115.25,37588.9,37735.85,36838.05,36407.4,35707.55,36826.0,37206.25,37281.7,37347.0,37526.15,37529.35,37349.05,36372.15,36643.4,36212.65,35236.4,34969.1,35021.9,34278.0,34513.9,34871.0,34691.85,34516.1,34784.6,34324.55,34535.1,35216.5,34681.5,34388.65,34445.15,33645.75,32983.45,32921.1,32888.9,33127.55,32603.7,33317.3,33998.65,33748.45,34208.2,33940.45,34248.85,34500.15,34912.4,34904.7,35072.25,35303.7,35250.5,35234.5,35372.05,35147.55,35267.5,35393.6,34860.85,34468.65,34165.7,33126.55,33245.3,33185.5,33489.15,33342.0,32847.05,32825.0,32911.4,33507.15,33222.15,32509.8,32432.65,31908.95,31517.5,31277.35,30125.5,30377.05,30648.65,30761.1,30645.55,30693.5,29609.7,29532.2,30231.35,29919.4,29039.35,28670.1,29403.5,29210.65,29528.55,29621.0,29657.7,30050.8,30229.7,29844.85,30161.3,29608.65,28908.7,28825.9,28867.55,28280.85,28202.55,28238.85,28451.2,28695.35,28216.4,27842.9,27767.2,27524.0,26676.7,26870.35,26760.2,27409.15,27405.7,27181.95,26775.0,26944.3,26767.8,26613.15,26829.25,27495.85,27761.7,28016.5,28205.75,28540.55,28282.25,28149.25,28317.35,28166.9,27655.55,28129.7,27804.6,26935.1,25997.45,26582.65,26210.45,26824.6,27576.3,27689.15,27976.45,28628.6,28779.15,29320.5,29332.35,28822.1,29141.9,29367.7,29270.6,29190.8,29618.65,29183.8,29476.55,29072.25,28878.0,30093.1,29985.75,30278.15,30602.5,30642.1,30570.3,30159.65,30446.25,30156.9,30371.85,30562.6,30426.65,30286.25,30547.05,30506.1,30512.05,30434.9,30738.45,31085.0,31299.85,31519.55,31656.65,31605.8,31133.95,31023.75,31385.45,31240.65,31230.55,30975.45,31506.45,31529.6,31542.6,31732.15,31899.35,31852.15,31901.15,31912.0,31722.7,31512.3,31443.05,31384.05,31430.15,31476.1,31249.1,30919.5,30980.5,31148.3,31130.15,30897.75,30690.5,31012.95,31066.3,31198.4,30911.55,30599.35,30317.15,30350.0,30306.85,30226.65,29863.45,30233.2,30179.85,30048.45,30144.95,29703.3,29975.5,29783.6,30158.9,30218.85,30663.5,30685.25,30695.4,30696.4,30620.75,30611.25,30121.15,29752.7,29637.3,30053.85,30016.4,30176.25,30076.15,30150.75,30207.9,30290.85,30564.65,30483.7,30758.2,30798.4,30933.05,30947.45,31077.75,30945.95,30915.55,30759.55,30531.45,30313.05,29826.85,29884.95,29844.65,30133.8,30238.5,30709.2,30837.75,30712.7,31010.4,31106.75,31213.7,31086.2,31580.25,31720.4,31805.55,31895.7,31882.9,31754.95,31683.5,31796.9,31669.4,31756.35,31630.25,31443.35,31606.7,31476.1,31213.95,31417.05,31538.1,31529.55,31783.85,31788.2,31884.15,32033.25,31824.45,31968.45,32170.0,31866.55,31641.9,31692.7,32153.05,32218.6,32145.85,32128.5,31960.65,31615.8,31695.45,31955.15,31397.85,31297.7,30982.8,31216.85,31449.2,31375.85,31155.35,30910.15,31023.7,31291.95,31503.4,31508.4,31381.7,31189.6,30998.6,30847.95,31147.55,31318.45,31619.9,31719.1,31760.55,31596.8,31181.4,30928.5,31025.35,30960.05,30971.55,31065.4,31229.0,30531.85,30350.95,30643.55,30190.1,30332.6,30606.6,30535.0,30327.15,29415.15,29742.25,30630.95,30926.05,30769.7,30876.95,31415.8,31439.75,31655.25,31892.3,31397.65,31454.9,31568.65,31755.85,31291.4,31588.8,31646.1,31548.3,31778.75,31922.85,31360.95,30845.6,30112.95,30625.3,30175.85,29476.95];
+const MOM_NIFTY = [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,17274,17332,17315,null,null,17124,null,null,17312,null,17512,null,17576,17731,17656,null,null,18012,null,18083,18053,null,null,18157,18028,18350,null,null,18410,18344,null,18160,18244,18267,null,18513,18563,null,18758,18812,null,null,null,18560,null,null,18497,null,18660,null,18269,18420,18385,18199,null,null,18015,null,18122,18191,18105,17981,17950,17920,17890,17859,17901,17915,17929,17943,17957,17814,17767,17719,17672,17624,17615,17613,17610,17604,17654,17671,17688,17704,17721,17742,17749,17756,17763,17770,17845,17870,17895,17920,17945,17739,17671,17602,17534,17465,17520,17539,17557,17576,17594,17516,17464,17438,17412,17278,17234,17189,17145,17100,17091,17089,17086,17083,17080,17200,17240,17280,17360,17480,17559,17599,17721,17751,17782,17812,17718,17694,17671,17648,17624,17813,17877,17940,18003,18066,18179,18207,18236,18264,18228,18217,18205,18193,18181,18190,18194,18197,18200,18203,18330,18372,18414,18457,18499,18520,18527,18534,18564,18593,18580,18576,18572,18567,18563,18617,18634,18652,18670,18688,18724,18735,18747,18759,18771,18950,19010,19070,19189,19250,19270,19290,19311,19331,19431,19464,19497,19531,19564,19642,19667,19693,19719,19745,19703,19688,19674,19660,19646,19754,19715,19676,19636,19597,19525,19500,19476,19452,19428,19377,19344,19327,19310,19291,19285,19279,19272,19266,19266,19265,19265,19265,19334,19542,19611,19680,19750,19819,19854,19866,19878,19889,19901,19804,19740,19707,19675,19659,19654,19649,19643,19638,19647,19649,19651,19653,19695,19709,19723,19737,19751,19661,19632,19602,19572,19542,19330,19188,19118,19047,19071,19079,19097,19115,19133,19258,19300,19342,19383,19425,null,19571,19668,19716,19765,19880,19918,19956,19995,20033,20100,20116,20133,20267,20519,20603,20687,20771,20855,20995,21042,21089,21135,21182,21254,21277,21301,21325,21349,21567,21622,21676,21731,21722,21719,21716,21713,21710,21684,21676,21667,21659,21650,21638,21634,21630,21626,21622,null,21468,21429,21391,21576,21650,21725,21790,21854,21823,21813,21803,21792,21782,21868,21897,21926,21954,21983,22081,22114,22147,22179,22212,22126,22097,22069,22040,22378,22419,22433,22447,22460,22281,22216,22152,22087,22023,22054,22065,22075,22086,22096,22249,22288,22326,22420,22444,22467,22490,22514,22516,22517,22518,22519,22360,22306,22200,22147,22328,22389,22449,22510,22570,22596,22604,22518,22475,22295,22235,22175,22115,22055,22231,22290,22349,22407,22466,null,22503,22512,22521,22530,22530,22530,22530,22530,22530,22046,21885,22354,22822,23291,23366,23390,23415,23440,23465,23486,23491,23496,23501,23562,23583,23603,23624,23644,23926,24020,24114,24208,24302,24388,24416,24445,24473,24502,24514,24518,24526,24530,24661,24705,24749,24792,24836,24905,24928,24951,24834,24717,24567,24517,24467,24417,24367,24442,24466,24491,24541,24662,24702,24742,24783,24823,25000,25058,25117,25176,25235,25071,25016,24961,24907,24852,25082,25159,25236,25312,25389,25561,25619,25676,25734,25791,25957,26013,26068,26124,26179,26178,25887,25306,25015,24994,24986,24979,24972,24965,24917,24902,24886,24870,24854,24566,24469,24373,24277,24181,24264,24291,24318,24346,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null];
+const MOM_TICKS = ["03-Jan-22","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","08-Mar-22","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","13-May-22","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","14-Jul-22","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","19-Sep-22","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","23-Nov-22","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","24-Jan-23","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","29-Mar-23","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","06-Jun-23","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","08-Aug-23","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","12-Oct-23","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","15-Dec-23","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","19-Feb-24","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","26-Apr-24","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","01-Jul-24","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","03-Sep-24","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","05-Nov-24","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","09-Jan-25","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","12-Mar-25","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","21-May-25","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","22-Jul-25","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","24-Sep-25","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","28-Nov-25","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","02-Feb-26","","","","","","","","","","","","","","","","","","","","","","","","09-Mar-26"];
+
+// Stat cards for Momentum chart
+(function() {
+  const first = MOM_CLOSE[0], last = MOM_CLOSE[MOM_CLOSE.length-1];
+  const chg = last - first, chgPct = ((chg/first)*100).toFixed(1);
+  const maxV = Math.max(...MOM_CLOSE), maxI = MOM_CLOSE.indexOf(maxV);
+  const minV = Math.min(...MOM_CLOSE), minI = MOM_CLOSE.indexOf(minV);
+  document.getElementById('statsRowMom').innerHTML = `
+    <div class="card" style="--card-accent:#ff6d3b">
+      <h3>Start (03-Jan-22)</h3>
+      <div class="value">${first.toLocaleString('en-IN')}</div>
+      <div class="sub">Momentum 30 Index</div>
+    </div>
+    <div class="card" style="--card-accent:#4a9fd4">
+      <h3>End (09-Mar-26)</h3>
+      <div class="value">${last.toLocaleString('en-IN')}</div>
+      <div class="sub">Momentum 30 Index</div>
+    </div>
+    <div class="card" style="--card-accent:#00c281">
+      <h3>Total Return</h3>
+      <div class="value positive">+${chgPct}%</div>
+      <div class="sub positive">+${chg.toLocaleString('en-IN')} pts</div>
+    </div>
+    <div class="card" style="--card-accent:#ff6d3b">
+      <h3>All-Time High</h3>
+      <div class="value">${maxV.toLocaleString('en-IN')}</div>
+      <div class="sub">${MOM_LABELS[maxI]}</div>
+    </div>
+    <div class="card" style="--card-accent:#ff4d4d">
+      <h3>Period Low</h3>
+      <div class="value">${minV.toLocaleString('en-IN')}</div>
+      <div class="sub">${MOM_LABELS[minI]}</div>
+    </div>
+    <div class="card" style="--card-accent:#4a9fd4">
+      <h3>Sessions</h3>
+      <div class="value">1,037</div>
+      <div class="sub">03 Jan 2022 – 09 Mar 2026</div>
+    </div>
+  `;
+})();
+
+// ── Momentum chart build/toggle ────────────────────────────────────────────────
+let chartMom = null;
+
+function buildChartMom() {
+  if (chartMom) { chartMom.destroy(); chartMom = null; }
+  const ctx = document.getElementById('cMom').getContext('2d');
+  const grad = ctx.createLinearGradient(0, 0, 0, ctx.canvas.clientHeight || 300);
+  grad.addColorStop(0, 'rgba(255,109,59,0.18)');
+  grad.addColorStop(1, 'rgba(255,109,59,0.01)');
+
+  chartMom = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: MOM_LABELS,
+      datasets: [{
+        label: 'Momentum 30',
+        data: MOM_CLOSE,
+        borderColor: '#ff6d3b',
+        backgroundColor: grad,
+        borderWidth: 1.8,
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: '#ff6d3b',
+        pointHoverBorderColor: isDark() ? '#1b1f2b' : '#ffffff',
+        pointHoverBorderWidth: 2,
+        tension: 0.2,
+        fill: true,
+      }]
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          ...baseTooltip(),
+          callbacks: {
+            title: ctx => ctx[0].label,
+            label: ctx => ` Momentum 30:  ${ctx.parsed.y.toLocaleString('en-IN')}`,
+            afterLabel: ctx => {
+              const n = MOM_NIFTY[ctx.dataIndex];
+              return n ? ` Nifty 50:       ${n.toLocaleString('en-IN')}` : ` Nifty 50:       —`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: getColors().gridColor, drawBorder: false },
+          ticks: {
+            color: getColors().tickColor,
+            maxRotation: 45,
+            callback: (val, i) => MOM_TICKS[i] || ''
+          }
+        },
+        y: {
+          grid: { color: getColors().gridColor, drawBorder: false },
+          ticks: { color: getColors().tickColor, callback: v => v.toLocaleString('en-IN') },
+          position: 'right',
+          min: 14000,
+        }
+      },
+      onHover: (e, elements) => {
+        if (elements.length) {
+          const i = elements[0].index;
+          const v = MOM_CLOSE[i];
+          const n = MOM_NIFTY[i];
+          const nStr = n ? `  ·  Nifty 50: ${n.toLocaleString('en-IN')}` : '';
+          document.getElementById('hoverInfoMom').textContent =
+            `${MOM_LABELS[i]}  ·  Momentum 30: ${v.toLocaleString('en-IN')}${nStr}`;
+        }
+      }
+    }
+  });
+}
+
+function toggleMomSeries() {
+  if (!chartMom) return;
+  const meta = chartMom.getDatasetMeta(0);
+  meta.hidden = !meta.hidden;
+  chartMom.update();
+  document.getElementById('btnMomClose').classList.toggle('on', !meta.hidden);
+}
+
 const _origBuild = buildCharts;
 buildCharts = function() {
   _origBuild();
@@ -1446,6 +1626,7 @@ buildCharts = function() {
   buildChartD17000_Dec2023();
   buildChartD18000_Dec2023();
   buildChartD19000_Dec2023();
+  buildChartMom();
 };
 
 // ── Init ──────────────────────────────────────────────────────────────────────
