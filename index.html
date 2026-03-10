@@ -152,7 +152,28 @@
     margin-bottom: 10px;
     border: 1px solid var(--border-color);
     transition: background-color 0.3s ease;
+    position: relative;
   }
+  .drag-badge {
+    display: none;
+    position: absolute;
+    top: 10px; left: 12px;
+    z-index: 10;
+    padding: 6px 12px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-family: 'Roboto', 'Open Sans', Arial, sans-serif;
+    line-height: 1.8;
+    border: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+  .drag-badge .db-range { font-size: 10px; color: var(--text-secondary); }
+  .drag-badge .db-pct   { font-size: 16px; font-weight: 500; }
+  .drag-badge .db-pts   { font-size: 11px; }
   .chart-header {
     display: flex; justify-content: space-between; align-items: flex-start;
     margin-bottom: 10px; flex-wrap: wrap; gap: 8px;
@@ -251,6 +272,7 @@
       </div>
     </div>
     <canvas id="cMain" class="chart-canvas"></canvas>
+    <div class="drag-badge" id="dragBadge_cMain"></div>
   </div>
 
 
@@ -274,6 +296,7 @@
       </div>
     </div>
     <canvas id="c1" class="chart-canvas"></canvas>
+    <div class="drag-badge" id="dragBadge_c1"></div>
   </div>
 
   <!-- CHART 2 TOOLBAR -->
@@ -296,6 +319,7 @@
       </div>
     </div>
     <canvas id="c2" class="chart-canvas"></canvas>
+    <div class="drag-badge" id="dragBadge_c2"></div>
   </div>
 
   <!-- CHART 3 TOOLBAR -->
@@ -318,6 +342,7 @@
       </div>
     </div>
     <canvas id="c3" class="chart-canvas"></canvas>
+    <div class="drag-badge" id="dragBadge_c3"></div>
   </div>
 
   <!-- CHART 4 TOOLBAR -->
@@ -340,6 +365,7 @@
       </div>
     </div>
     <canvas id="c4" class="chart-canvas"></canvas>
+    <div class="drag-badge" id="dragBadge_c4"></div>
   </div>
 
   <!-- CHART 5 TOOLBAR -->
@@ -362,6 +388,7 @@
       </div>
     </div>
     <canvas id="c5" class="chart-canvas"></canvas>
+    <div class="drag-badge" id="dragBadge_c5"></div>
   </div>
 
   <!-- CHART 6 TOOLBAR -->
@@ -384,6 +411,7 @@
       </div>
     </div>
     <canvas id="c6" class="chart-canvas"></canvas>
+    <div class="drag-badge" id="dragBadge_c6"></div>
   </div>
 
   <!-- CHART 7 TOOLBAR -->
@@ -406,6 +434,7 @@
       </div>
     </div>
     <canvas id="c7" class="chart-canvas"></canvas>
+    <div class="drag-badge" id="dragBadge_c7"></div>
   </div>
 
   <!-- CHART 8 TOOLBAR -->
@@ -428,6 +457,7 @@
       </div>
     </div>
     <canvas id="c8" class="chart-canvas"></canvas>
+    <div class="drag-badge" id="dragBadge_c8"></div>
   </div>
 
   <!-- CHART 9 TOOLBAR -->
@@ -450,6 +480,7 @@
       </div>
     </div>
     <canvas id="c9" class="chart-canvas"></canvas>
+    <div class="drag-badge" id="dragBadge_c9"></div>
   </div>
 
   <!-- CHART 10 TOOLBAR -->
@@ -472,6 +503,7 @@
       </div>
     </div>
     <canvas id="c10" class="chart-canvas"></canvas>
+    <div class="drag-badge" id="dragBadge_c10"></div>
   </div>
 
 </div>
@@ -517,6 +549,7 @@
       </div>
     </div>
     <canvas id="cMom" class="chart-canvas"></canvas>
+    <div class="drag-badge" id="dragBadge_cMom"></div>
   </div>
 
   <p class="disclaimer">Source: NSE India · Nifty 200 Momentum 30 Index · Daily · Nifty 50 overlay (Oct 2022 – Oct 2024) from matched sessions · Not for trading decisions</p>
@@ -524,52 +557,47 @@
 
 <script>
 // ── Drag-Select Range Plugin ───────────────────────────────────────────────────
-// Uses Chart.js's own getElementsAtEventForMode for hit-testing so the
-// selection boundaries always match exactly where the tooltip appears.
+// Uses e.offsetX which is already in CSS-pixel canvas-local coords —
+// exactly what Chart.js uses internally, so alignment is guaranteed.
 (function() {
-  const badge = document.createElement('div');
-  badge.id = 'dragBadge';
-  Object.assign(badge.style, {
-    position:'fixed', display:'none', pointerEvents:'none', zIndex:'9999',
-    padding:'7px 13px', borderRadius:'3px', fontSize:'12px',
-    fontFamily:"'Roboto','Open Sans',Arial,sans-serif",
-    lineHeight:'1.7', border:'1px solid',
-    boxShadow:'0 4px 16px rgba(0,0,0,0.25)', whiteSpace:'nowrap',
-  });
-  document.body.appendChild(badge);
 
-  function setBadgeTheme() {
-    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-    badge.style.background  = dark ? '#242837' : '#ffffff';
-    badge.style.borderColor = dark ? '#2e3241' : '#e0e0e0';
-    badge.style.color       = dark ? '#d4d4d4' : '#424242';
+  // Map canvas id → badge element
+  function getBadge(canvasId) {
+    return document.getElementById('dragBadge_' + canvasId);
   }
 
-  function placeBadge(cx, cy) {
-    const bw = 230, bh = 80;
-    let l = cx + 16, t = cy - 10;
-    if (l + bw > window.innerWidth  - 8) l = cx - bw - 16;
-    if (t + bh > window.innerHeight - 8) t = cy - bh - 10;
-    badge.style.left = l + 'px'; badge.style.top = t + 'px';
+  function showBadge(badge, chart, lo, hi) {
+    if (!badge || lo === hi) return;
+
+    let ds = null;
+    for (let i = 0; i < chart.data.datasets.length; i++) {
+      if (!chart.getDatasetMeta(i).hidden) { ds = chart.data.datasets[i]; break; }
+    }
+    if (!ds) return;
+    const vLo = ds.data[lo], vHi = ds.data[hi];
+    if (vLo == null || vHi == null) return;
+
+    const delta  = vHi - vLo;
+    const pct    = ((delta / vLo) * 100).toFixed(2);
+    const sign   = delta >= 0 ? '+' : '';
+    const color  = delta >= 0 ? '#00c281' : '#ff4d4d';
+    const absVal = Math.abs(delta).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+    const lLo = chart.data.labels[lo], lHi = chart.data.labels[hi];
+
+    badge.innerHTML =
+      `<div class="db-range">${lLo} &rarr; ${lHi}</div>` +
+      `<div class="db-pct" style="color:${color}">${sign}${pct}%</div>` +
+      `<div class="db-pts" style="color:${color}">${sign}${absVal} pts</div>`;
+    badge.style.display = 'block';
   }
 
-  // Ask Chart.js which data index is under clientX/clientY —
-  // exactly the same lookup the tooltip uses, so it always matches.
-  function eventToIndex(chart, clientX, clientY) {
-    const rect = chart.canvas.getBoundingClientRect();
-    // Build a minimal synthetic event that Chart.js event helpers accept
-    const synth = {
-      type: 'mousemove',
-      target: chart.canvas,
-      clientX, clientY,
-      // offsetX/offsetY needed by some Chart.js internal paths
-      offsetX: clientX - rect.left,
-      offsetY: clientY - rect.top,
-      native: { clientX, clientY },
-    };
-    const elements = chart.getElementsAtEventForMode(synth, 'index', { intersect: false }, false);
-    if (elements && elements.length > 0) return elements[0].index;
-    return null;
+  // Convert offsetX (CSS px relative to canvas) → data index
+  // chartArea is also in CSS px, so this is a direct comparison — no DPR math.
+  function offsetXToIndex(chart, offsetX) {
+    const area = chart.chartArea;
+    const nPts = chart.data.labels.length;
+    const frac = Math.max(0, Math.min(1, (offsetX - area.left) / (area.right - area.left)));
+    return Math.round(frac * (nPts - 1));
   }
 
   const state = new WeakMap();
@@ -578,42 +606,48 @@
     id: 'dragSelect',
 
     afterInit(chart) {
+      const canvasId = chart.canvas.id;
       const s = { active:false, dragging:false, startIdx:null, endIdx:null,
-                  startCX:null, lastCX:null, lastCY:null };
+                  startOffsetX:null };
       state.set(chart, s);
       const el = chart.canvas;
 
       el.addEventListener('mousedown', e => {
         if (e.button !== 0) return;
+        const badge = getBadge(canvasId);
+        if (badge) badge.style.display = 'none';
         Object.assign(s, { active:true, dragging:false, startIdx:null, endIdx:null,
-          startCX:e.clientX, lastCX:e.clientX, lastCY:e.clientY });
+          startOffsetX: e.offsetX });
       });
 
       el.addEventListener('mousemove', e => {
         if (!s.active) return;
-        s.lastCX = e.clientX; s.lastCY = e.clientY;
-        if (Math.abs(e.clientX - s.startCX) < 6) return;
+        if (Math.abs(e.offsetX - s.startOffsetX) < 6) return;
         if (!s.dragging) {
           s.dragging = true;
-          s.startIdx = eventToIndex(chart, s.startCX, e.clientY);
+          s.startIdx = offsetXToIndex(chart, s.startOffsetX);
         }
-        const idx = eventToIndex(chart, e.clientX, e.clientY);
-        if (idx !== null) s.endIdx = idx;
+        s.endIdx = offsetXToIndex(chart, e.offsetX);
         chart.draw();
-        renderBadge(chart, s, e.clientX, e.clientY);
+        const badge = getBadge(canvasId);
+        if (s.startIdx !== null && s.endIdx !== null) {
+          const lo = Math.min(s.startIdx, s.endIdx);
+          const hi = Math.max(s.startIdx, s.endIdx);
+          showBadge(badge, chart, lo, hi);
+        }
       });
 
-      const finish = e => {
+      const finish = () => {
         if (!s.active) return;
         s.active = false;
         if (!s.dragging) {
           s.startIdx = null; s.endIdx = null;
-          badge.style.display = 'none';
+          const badge = getBadge(canvasId);
+          if (badge) badge.style.display = 'none';
           chart.draw(); return;
         }
         s.dragging = false;
         chart.draw();
-        renderBadge(chart, s, s.lastCX, s.lastCY);
       };
 
       el.addEventListener('mouseup',    finish);
@@ -628,7 +662,7 @@
       if (lo === hi) return;
 
       const { ctx, chartArea: a } = chart;
-      const xs = chart.scales.x;
+      const xs  = chart.scales.x;
       const xLo = xs.getPixelForValue(lo);
       const xHi = xs.getPixelForValue(hi);
       const dark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -644,36 +678,6 @@
       ctx.setLineDash([]); ctx.restore();
     },
   };
-
-  function renderBadge(chart, s, cx, cy) {
-    const lo = Math.min(s.startIdx, s.endIdx);
-    const hi = Math.max(s.startIdx, s.endIdx);
-    if (lo == null || hi == null || lo === hi) return;
-
-    let ds = null;
-    for (let i = 0; i < chart.data.datasets.length; i++) {
-      if (!chart.getDatasetMeta(i).hidden) { ds = chart.data.datasets[i]; break; }
-    }
-    if (!ds) return;
-
-    const vLo = ds.data[lo], vHi = ds.data[hi];
-    if (vLo == null || vHi == null) return;
-
-    const delta  = vHi - vLo;
-    const pct    = ((delta / vLo) * 100).toFixed(2);
-    const sign   = delta >= 0 ? '+' : '';
-    const color  = delta >= 0 ? '#00c281' : '#ff4d4d';
-    const absVal = Math.abs(delta).toLocaleString('en-IN', { maximumFractionDigits: 2 });
-    const dim    = document.documentElement.getAttribute('data-theme') === 'dark' ? '#888' : '#999';
-
-    setBadgeTheme();
-    badge.innerHTML =
-      `<div style="font-size:10px;color:${dim};margin-bottom:2px">${chart.data.labels[lo]} &rarr; ${chart.data.labels[hi]}</div>` +
-      `<div style="font-size:15px;font-weight:500;color:${color}">${sign}${pct}%</div>` +
-      `<div style="font-size:11px;color:${color}">${sign}${absVal} pts</div>`;
-    badge.style.display = 'block';
-    placeBadge(cx, cy);
-  }
 
   Chart.register(dragPlugin);
 })();
@@ -1017,7 +1021,7 @@ function buildChartD18000_Dec2024() {
           ...baseTooltip(),
           callbacks: {
             title: ctx => ctx[0].label,
-            label: ctx => ' Opt Close:  ₹' + ctx.parsed.y.toLocaleString('en-IN'),
+            label: ctx => ' Close:      ₹' + ctx.parsed.y.toLocaleString('en-IN'),
             afterLabel: ctx => {
               const i = ctx.dataIndex;
               const lines = [];
@@ -1104,7 +1108,7 @@ function buildChartD20000_Dec2024() {
           ...baseTooltip(),
           callbacks: {
             title: ctx => ctx[0].label,
-            label: ctx => ' Opt Close:  ₹' + ctx.parsed.y.toLocaleString('en-IN'),
+            label: ctx => ' Close:      ₹' + ctx.parsed.y.toLocaleString('en-IN'),
             afterLabel: ctx => {
               const i = ctx.dataIndex;
               const lines = [];
@@ -1191,7 +1195,7 @@ function buildChartD22000_Dec2024() {
           ...baseTooltip(),
           callbacks: {
             title: ctx => ctx[0].label,
-            label: ctx => ' Opt Close:  ₹' + ctx.parsed.y.toLocaleString('en-IN'),
+            label: ctx => ' Close:      ₹' + ctx.parsed.y.toLocaleString('en-IN'),
             afterLabel: ctx => {
               const i = ctx.dataIndex;
               const lines = [];
@@ -1278,7 +1282,7 @@ function buildChartD18000_Jun2024() {
           ...baseTooltip(),
           callbacks: {
             title: ctx => ctx[0].label,
-            label: ctx => ' Opt Close:  ₹' + ctx.parsed.y.toLocaleString('en-IN'),
+            label: ctx => ' Close:      ₹' + ctx.parsed.y.toLocaleString('en-IN'),
             afterLabel: ctx => {
               const i = ctx.dataIndex;
               const lines = [];
@@ -1365,7 +1369,7 @@ function buildChartD20000_Jun2024() {
           ...baseTooltip(),
           callbacks: {
             title: ctx => ctx[0].label,
-            label: ctx => ' Opt Close:  ₹' + ctx.parsed.y.toLocaleString('en-IN'),
+            label: ctx => ' Close:      ₹' + ctx.parsed.y.toLocaleString('en-IN'),
             afterLabel: ctx => {
               const i = ctx.dataIndex;
               const lines = [];
@@ -1452,7 +1456,7 @@ function buildChartD22000_Jun2024() {
           ...baseTooltip(),
           callbacks: {
             title: ctx => ctx[0].label,
-            label: ctx => ' Opt Close:  ₹' + ctx.parsed.y.toLocaleString('en-IN'),
+            label: ctx => ' Close:      ₹' + ctx.parsed.y.toLocaleString('en-IN'),
             afterLabel: ctx => {
               const i = ctx.dataIndex;
               const lines = [];
@@ -1540,7 +1544,7 @@ function buildChartD24000_Dec2024() {
           ...baseTooltip(),
           callbacks: {
             title: ctx => ctx[0].label,
-            label: ctx => ' Opt Close:  ₹' + ctx.parsed.y.toLocaleString('en-IN'),
+            label: ctx => ' Close:      ₹' + ctx.parsed.y.toLocaleString('en-IN'),
             afterLabel: ctx => {
               const i = ctx.dataIndex;
               const lines = [];
@@ -1625,7 +1629,7 @@ function _buildOptionChart(canvasId, labels, optClose, underlying, oi, contracts
     data: { labels, datasets: [{ label: 'Option Close', data: optClose, borderColor: '#ff6d3b', backgroundColor: grad, borderWidth: 1.8, pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: '#ff6d3b', pointHoverBorderColor: isDark() ? '#1b1f2b' : '#ffffff', pointHoverBorderWidth: 2, tension: 0.2, fill: true }] },
     options: {
       responsive: true, interaction: { mode: 'index', intersect: false },
-      plugins: { legend: { display: false }, tooltip: { ...baseTooltip(), callbacks: { title: ctx => ctx[0].label, label: ctx => ' Opt Close:  ₹' + ctx.parsed.y.toLocaleString('en-IN'), afterLabel: ctx => { const i = ctx.dataIndex, lines = []; if (underlying[i] != null) lines.push(' Underlying: ₹' + underlying[i].toLocaleString('en-IN')); if (oi[i] != null) lines.push(' Open Int:   ' + oi[i].toLocaleString('en-IN') + ' lots'); if (contracts[i] != null) lines.push(' Volume:     ' + contracts[i].toLocaleString('en-IN') + ' contracts'); return lines; } } } },
+      plugins: { legend: { display: false }, tooltip: { ...baseTooltip(), callbacks: { title: ctx => ctx[0].label, label: ctx => ' Close:      ₹' + ctx.parsed.y.toLocaleString('en-IN'), afterLabel: ctx => { const i = ctx.dataIndex, lines = []; if (underlying[i] != null) lines.push(' Underlying: ₹' + underlying[i].toLocaleString('en-IN')); if (oi[i] != null) lines.push(' Open Int:   ' + oi[i].toLocaleString('en-IN') + ' lots'); if (contracts[i] != null) lines.push(' Volume:     ' + contracts[i].toLocaleString('en-IN') + ' contracts'); return lines; } } } },
       scales: { x: { grid: { color: c.gridColor, drawBorder: false }, ticks: { color: c.tickColor, maxRotation: 45, callback: (val, i) => ticks[i] || '' } }, y: { position: 'right', grid: { color: c.gridColor, drawBorder: false }, ticks: { color: c.tickColor, callback: v => '₹' + v.toLocaleString('en-IN') } } },
       onHover: (e, elements) => { if (elements.length) { const i = elements[0].index; let txt = labels[i] + '  ·  Close: ₹' + (optClose[i] != null ? optClose[i].toLocaleString('en-IN') : '—'); if (underlying[i] != null) txt += '  ·  Spot: ₹' + underlying[i].toLocaleString('en-IN'); if (oi[i] != null) txt += '  ·  OI: ' + oi[i].toLocaleString('en-IN'); if (contracts[i] != null) txt += '  ·  Vol: ' + contracts[i].toLocaleString('en-IN'); document.getElementById(hoverDivId).textContent = txt; } }
     }
