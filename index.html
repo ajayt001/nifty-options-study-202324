@@ -524,15 +524,17 @@
 
 <script>
 // ── Drag-Select Range Plugin ───────────────────────────────────────────────────
+// Uses Chart.js's own getElementsAtEventForMode for hit-testing so the
+// selection boundaries always match exactly where the tooltip appears.
 (function() {
   const badge = document.createElement('div');
   badge.id = 'dragBadge';
   Object.assign(badge.style, {
-    position: 'fixed', display: 'none', pointerEvents: 'none', zIndex: '9999',
-    padding: '7px 13px', borderRadius: '3px', fontSize: '12px',
-    fontFamily: "'Roboto', 'Open Sans', Arial, sans-serif",
-    lineHeight: '1.7', border: '1px solid',
-    boxShadow: '0 4px 16px rgba(0,0,0,0.25)', whiteSpace: 'nowrap',
+    position:'fixed', display:'none', pointerEvents:'none', zIndex:'9999',
+    padding:'7px 13px', borderRadius:'3px', fontSize:'12px',
+    fontFamily:"'Roboto','Open Sans',Arial,sans-serif",
+    lineHeight:'1.7', border:'1px solid',
+    boxShadow:'0 4px 16px rgba(0,0,0,0.25)', whiteSpace:'nowrap',
   });
   document.body.appendChild(badge);
 
@@ -543,31 +545,31 @@
     badge.style.color       = dark ? '#d4d4d4' : '#424242';
   }
 
-  function placeBadge(clientX, clientY) {
+  function placeBadge(cx, cy) {
     const bw = 230, bh = 80;
-    let left = clientX + 16, top = clientY - 10;
-    if (left + bw > window.innerWidth  - 8) left = clientX - bw - 16;
-    if (top  + bh > window.innerHeight - 8) top  = clientY - bh - 10;
-    badge.style.left = left + 'px';
-    badge.style.top  = top  + 'px';
+    let l = cx + 16, t = cy - 10;
+    if (l + bw > window.innerWidth  - 8) l = cx - bw - 16;
+    if (t + bh > window.innerHeight - 8) t = cy - bh - 10;
+    badge.style.left = l + 'px'; badge.style.top = t + 'px';
   }
 
-  // Use Chart.js's own coordinate system via a synthetic event object.
-  // This is the same path Chart.js uses internally for tooltip hit-testing,
-  // so it is always correct regardless of DPR or CSS transforms.
-  function pxToIndex(chart, clientX) {
+  // Ask Chart.js which data index is under clientX/clientY —
+  // exactly the same lookup the tooltip uses, so it always matches.
+  function eventToIndex(chart, clientX, clientY) {
     const rect = chart.canvas.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const y = rect.height / 2;
-    // getElementsAtEventForMode expects a native-style event with offsetX/offsetY
-    // but Chart.js 4.x exposes scale.getValueForPixel which works in CSS px
-    // because chart.scales coords are already in CSS px space when responsive=true.
-    const xScale = chart.scales.x;
-    const area   = chart.chartArea;
-    const nPts   = chart.data.labels.length;
-    // chart.chartArea is in CSS px when the canvas is responsive
-    const frac = Math.max(0, Math.min(1, (x - area.left) / (area.right - area.left)));
-    return Math.round(frac * (nPts - 1));
+    // Build a minimal synthetic event that Chart.js event helpers accept
+    const synth = {
+      type: 'mousemove',
+      target: chart.canvas,
+      clientX, clientY,
+      // offsetX/offsetY needed by some Chart.js internal paths
+      offsetX: clientX - rect.left,
+      offsetY: clientY - rect.top,
+      native: { clientX, clientY },
+    };
+    const elements = chart.getElementsAtEventForMode(synth, 'index', { intersect: false }, false);
+    if (elements && elements.length > 0) return elements[0].index;
+    return null;
   }
 
   const state = new WeakMap();
@@ -577,38 +579,41 @@
 
     afterInit(chart) {
       const s = { active:false, dragging:false, startIdx:null, endIdx:null,
-                  startClientX:null, lastClientX:null, lastClientY:null };
+                  startCX:null, lastCX:null, lastCY:null };
       state.set(chart, s);
       const el = chart.canvas;
 
       el.addEventListener('mousedown', e => {
         if (e.button !== 0) return;
         Object.assign(s, { active:true, dragging:false, startIdx:null, endIdx:null,
-          startClientX:e.clientX, lastClientX:e.clientX, lastClientY:e.clientY });
+          startCX:e.clientX, lastCX:e.clientX, lastCY:e.clientY });
       });
 
       el.addEventListener('mousemove', e => {
         if (!s.active) return;
-        s.lastClientX = e.clientX; s.lastClientY = e.clientY;
-        if (Math.abs(e.clientX - s.startClientX) < 5) return;
-        if (!s.dragging) { s.dragging = true; s.startIdx = pxToIndex(chart, s.startClientX); }
-        s.endIdx = pxToIndex(chart, e.clientX);
+        s.lastCX = e.clientX; s.lastCY = e.clientY;
+        if (Math.abs(e.clientX - s.startCX) < 6) return;
+        if (!s.dragging) {
+          s.dragging = true;
+          s.startIdx = eventToIndex(chart, s.startCX, e.clientY);
+        }
+        const idx = eventToIndex(chart, e.clientX, e.clientY);
+        if (idx !== null) s.endIdx = idx;
         chart.draw();
-        showBadge(chart, s, e.clientX, e.clientY);
+        renderBadge(chart, s, e.clientX, e.clientY);
       });
 
-      const finish = () => {
+      const finish = e => {
         if (!s.active) return;
         s.active = false;
         if (!s.dragging) {
-          Object.assign(s, { startIdx:null, endIdx:null });
+          s.startIdx = null; s.endIdx = null;
           badge.style.display = 'none';
-          chart.draw();
-          return;
+          chart.draw(); return;
         }
         s.dragging = false;
         chart.draw();
-        showBadge(chart, s, s.lastClientX, s.lastClientY);
+        renderBadge(chart, s, s.lastCX, s.lastCY);
       };
 
       el.addEventListener('mouseup',    finish);
@@ -623,10 +628,9 @@
       if (lo === hi) return;
 
       const { ctx, chartArea: a } = chart;
-      // In Chart.js 4 with responsive:true, getPixelForValue on a category axis
-      // returns CSS-space pixels (matches chartArea), so drawing is correct.
-      const xLo = chart.scales.x.getPixelForValue(lo);
-      const xHi = chart.scales.x.getPixelForValue(hi);
+      const xs = chart.scales.x;
+      const xLo = xs.getPixelForValue(lo);
+      const xHi = xs.getPixelForValue(hi);
       const dark = document.documentElement.getAttribute('data-theme') === 'dark';
 
       ctx.save();
@@ -641,10 +645,10 @@
     },
   };
 
-  function showBadge(chart, s, clientX, clientY) {
+  function renderBadge(chart, s, cx, cy) {
     const lo = Math.min(s.startIdx, s.endIdx);
     const hi = Math.max(s.startIdx, s.endIdx);
-    if (lo === hi || lo == null || hi == null) return;
+    if (lo == null || hi == null || lo === hi) return;
 
     let ds = null;
     for (let i = 0; i < chart.data.datasets.length; i++) {
@@ -668,12 +672,11 @@
       `<div style="font-size:15px;font-weight:500;color:${color}">${sign}${pct}%</div>` +
       `<div style="font-size:11px;color:${color}">${sign}${absVal} pts</div>`;
     badge.style.display = 'block';
-    placeBadge(clientX, clientY);
+    placeBadge(cx, cy);
   }
 
   Chart.register(dragPlugin);
 })();
-
 
 
 // ── Theme ──────────────────────────────────────────────────────────────────────
